@@ -1,4 +1,5 @@
 const KEY = "AIzaSyBrI2TLDVgMq3uZlOdd2nTk1TKXW2jsLzM"
+var options = { month: 'long'};
 
 class DigitalClock {
     constructor(element) {
@@ -17,9 +18,13 @@ class DigitalClock {
         const minutesFormatted = parts.minute.toString().padStart(2, "0");
         const timeFormatted = `${parts.hour}:${minutesFormatted}`
         const amPM = parts.isAM ? "AM" : "PM";
+        const month = new Intl.DateTimeFormat('en-US', options).format(parts.month);
+        const date = parts.date;
+        const year = parts.year;
 
         this.element.querySelector(".clock-time").textContent = timeFormatted;
         this.element.querySelector(".clock-ampm").textContent = amPM;
+        this.element.querySelector(".date").textContent = `${month} ${date}, ${year}`;
     };
 
     getTimeParts() {
@@ -27,7 +32,10 @@ class DigitalClock {
         return {
             hour: now.getHours() % 12 || 12,
             minute: now.getMinutes(),
-            isAM: now.getHours() < 12
+            isAM: now.getHours() < 12,
+            date: now.getDate(),
+            month: now.getMonth(),
+            year: now.getFullYear()
         };
     }
 }
@@ -45,20 +53,25 @@ if ('geolocation' in navigator) {
 
 var long;
 var lat;
+var loc;
 
 navigator.geolocation.getCurrentPosition((position) => {
     long = position.coords.longitude;
     lat = position.coords.latitude;
+    query = `https://maps.googleapis.com/maps/api/geocode/json?result_type=locality&latlng=${lat},${long}&key=${KEY}`;
+    //console.log(query);
+    getLocation(query);
 });
 
-console.log(long, lat);
+function getLocation(query) {
+    fetch(query)
+        .then(response => response.json())
+        .then(data => {
+            loc = data.results[0].address_components[0].long_name;
+            clockObject.element.querySelector(".location").textContent = loc;
+        })
+        .catch(err => console.warn(err.message));
+        
+}
 
-query = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${KEY}`;
-console.log(query);
-
-fetch(query)
-    .then(response => response.json())
-    .then(data => {
-        console.log(data);
-    })
-    .catch(err => console.warn(err.message));
+console.log(loc);
