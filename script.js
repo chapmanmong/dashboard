@@ -1,4 +1,6 @@
 const KEY = "AIzaSyBrI2TLDVgMq3uZlOdd2nTk1TKXW2jsLzM"
+const OPENWEATHERAPI = "608ac5b8c6bf5a9a1ff1a77467cb0f28"
+
 var options = { month: 'long'};
 
 class DigitalClock {
@@ -61,6 +63,9 @@ navigator.geolocation.getCurrentPosition((position) => {
     query = `https://maps.googleapis.com/maps/api/geocode/json?result_type=locality&latlng=${lat},${long}&key=${KEY}`;
     //console.log(query);
     getLocation(query);
+    weatherQuery = `https://api.openweathermap.org/data/2.5/onecall?units=metric&lat=${lat}&lon=${long}&appid=${OPENWEATHERAPI}`;
+    console.log(weatherQuery);
+    getWeather(weatherQuery);
 });
 
 function getLocation(query) {
@@ -74,4 +79,44 @@ function getLocation(query) {
         
 }
 
-console.log(loc);
+function getWeather(weatherQuery){
+    fetch(weatherQuery)
+        .then(response => response.json())
+        .then(data => {
+            var current_temp = data.current.temp;
+            var current_desc = data.current.weather[0].description;
+            var weather_id = data.current.weather[0].id;
+            clockObject.element.querySelector(".temp").textContent = current_temp;
+            clockObject.element.querySelector(".conditions").textContent = current_desc;
+            clockObject.element.querySelector(".condition-icon").innerHTML = idToIcon(weather_id);
+            var skycons = new Skycons({"color": "white"});
+            skycons.add(document.getElementById("weather-icon"), Skycons.RAIN);
+            skycons.play();
+        })
+        .catch(err => console.warn(err));
+}
+
+function idToIcon(id){
+    if (id >= 200 && id < 300){
+        return `<i class="fas fa-bolt"></i>`;
+    }
+    else if (id >= 300 && id < 400){
+        return `<i class="fas fa-cloud-rain"></i>`;
+    }
+    else if (id >= 500 && id < 600){
+        return `<i class="fas fa-cloud-showers-heavy"></i>`;
+    }
+    else if (id >= 600 && id < 700){
+       return `<i class="fas fa-snowflake"></i>`;
+    }
+    else if (id >= 700 && id < 800){
+        return `<i class="fas fa-exclamation"></i>`;
+    }
+    else if (id == 800) {
+        return `<i class="fas fa-sun"></i>`;
+    }
+    else if (id > 800){
+        return `<i class="fas fa-cloud"></i>`;
+    }
+    
+}

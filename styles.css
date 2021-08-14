@@ -1,15 +1,15 @@
 .clock {
+    font-family: sans-serif;
     background: #333;
-    width: 200px;
-    padding: 10px;
+    width: 400px;
+    padding: 20px;
     text-align: center;
     border-radius: 10px;
     margin: auto;
 }
 
 .clock-time, .clock-ampm {
-    font-family: sans-serif;
-    font-size: 30px;
+    font-size: 3rem;
     color: #eeeeee;
 }
 
@@ -19,5 +19,5 @@
 }
 
 .clock-time {
-    font-size: 48px;
+    font-size: 4rem;
 }
