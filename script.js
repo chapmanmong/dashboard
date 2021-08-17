@@ -20,7 +20,7 @@ class DigitalClock {
         const minutesFormatted = parts.minute.toString().padStart(2, "0");
         const timeFormatted = `${parts.hour}:${minutesFormatted}`
         const amPM = parts.isAM ? "AM" : "PM";
-        const month = new Intl.DateTimeFormat('en-US', options).format(parts.month);
+        const month = parts.now.toLocaleString('default', { month: 'long' });
         const date = parts.date;
         const year = parts.year;
 
@@ -37,7 +37,8 @@ class DigitalClock {
             isAM: now.getHours() < 12,
             date: now.getDate(),
             month: now.getMonth(),
-            year: now.getFullYear()
+            year: now.getFullYear(),
+            now: now
         };
     }
 }
@@ -125,17 +126,28 @@ function getForecast(data){
         newLi = document.createElement('li');
         const minTemp = data.daily[i].temp.min;
         const maxTemp = data.daily[i].temp.max;
-        const text = `Min: ${minTemp}, Max:${maxTemp}`
+        const desc = data.daily[i].weather[0].description;
+        const weather_id = data.daily[i].weather[0].id;
+        icon = idToIcon(weather_id)
+        const text = `Min: ${minTemp}°C | Max:${maxTemp}°C | ${desc} | `
         const date = timestampToDate(data.daily[i].dt);
-        newLi.textContent = date + " : " + text;
+        newLi.textContent = date + ": " + text;
+        newSpan = document.createElement("span");
+        newSpan.innerHTML = icon;
+        newLi.append(newSpan);
         forecastList.append(newLi) 
 
     }
 }
 
 function timestampToDate(timestamp){
-    const time = new Date(timestamp * 1000);
-    const month = new Intl.DateTimeFormat('en-US', options).format(time.getMonth());
-    const date = time.getDate();
-    return month + " " + date;
+    console.log(timestamp);
+    var options = { weekday: 'short', day: 'numeric' };
+    const date = new Date(timestamp * 1000);
+    // console.log(time.getMonth());
+    // const month = new Intl.DateTimeFormat('en-US', options).format(8);
+    // console.log(month);
+    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
+    console.log(formattedDate);
+    return formattedDate;
 }
