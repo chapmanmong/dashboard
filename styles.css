@@ -1,3 +1,5 @@
+/* digital clock segment */
+
 .clock {
     font-family: sans-serif;
     background: #333;
@@ -21,3 +23,29 @@
 .clock-time {
     font-size: 4rem;
 }
+
+/* 7-day forecast segment */
+
+.forecast-div {
+    background-color: #333;
+    width: 25%;
+    border-radius: 10px;
+}
+
+ul {
+    color: #eeeeee;
+    width: 80%;
+    border-radius: 10px;
+    text-align: center;
+    list-style-type: none; /* Remove bullets */
+    padding: auto; /* Remove padding */
+    margin: 0; /* Remove margins */
+  }
+  
+  ul li {
+    text-align: center;
+    border-bottom: 1px solid #ddd; /* Add a thin border to each list item */
+    /* margin-top: -1px; Prevent double borders */
+    background-color: #333;; /* Add a grey background color */
+    padding: 12px; /* Add some padding */
+  }

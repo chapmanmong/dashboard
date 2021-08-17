@@ -86,12 +86,10 @@ function getWeather(weatherQuery){
             var current_temp = data.current.temp;
             var current_desc = data.current.weather[0].description;
             var weather_id = data.current.weather[0].id;
+            getForecast(data);
             clockObject.element.querySelector(".temp").textContent = current_temp;
             clockObject.element.querySelector(".conditions").textContent = current_desc;
             clockObject.element.querySelector(".condition-icon").innerHTML = idToIcon(weather_id);
-            var skycons = new Skycons({"color": "white"});
-            skycons.add(document.getElementById("weather-icon"), Skycons.RAIN);
-            skycons.play();
         })
         .catch(err => console.warn(err));
 }
@@ -119,4 +117,25 @@ function idToIcon(id){
         return `<i class="fas fa-cloud"></i>`;
     }
     
+}
+
+function getForecast(data){
+    forecastList = document.querySelector(".forecast-list")
+    for(i = 1; i < 8; i++){
+        newLi = document.createElement('li');
+        const minTemp = data.daily[i].temp.min;
+        const maxTemp = data.daily[i].temp.max;
+        const text = `Min: ${minTemp}, Max:${maxTemp}`
+        const date = timestampToDate(data.daily[i].dt);
+        newLi.textContent = date + " : " + text;
+        forecastList.append(newLi) 
+
+    }
+}
+
+function timestampToDate(timestamp){
+    const time = new Date(timestamp * 1000);
+    const month = new Intl.DateTimeFormat('en-US', options).format(time.getMonth());
+    const date = time.getDate();
+    return month + " " + date;
 }
