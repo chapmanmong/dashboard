@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,20 +9,31 @@
     <title>Dashboard</title>
     <script src="https://kit.fontawesome.com/2e833974a4.js" crossorigin="anonymous"></script>
 </head>
+
 <body>
     <div class="clock">
         <p class="datelocation"><span class="date"></span></p>
         <span class="clock-time"></span>
         <span class="clock-ampm"></span>
-        <p class="datelocation"><span class="location"></span>&ensp;|&ensp;<span class="temp"></span>°C&ensp;|&ensp;<span class="condition-icon"></span>&ensp;<span class="conditions"></span></p>          
+        <p class="datelocation"><span class="location"></span>&ensp;|&ensp;<span
+                class="temp"></span>°C&ensp;|&ensp;<span class="condition-icon"></span>&ensp;<span
+                class="conditions"></span></p>
     </div>
     <div class="row">
         <div class="forecast-div">
             <ul class="forecast-list">
             </ul>
         </div>
-
+        <div class="todo-section">
+            <fieldset>
+                <input type="text" class="todo-input" id="">
+                <button class="addBtn"><i class="fas fa-plus"></i></button>
+            </fieldset>
+            <div class="todo-container">
+            </div>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
+
 </html>

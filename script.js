@@ -20,7 +20,7 @@ class DigitalClock {
         const minutesFormatted = parts.minute.toString().padStart(2, "0");
         const timeFormatted = `${parts.hour}:${minutesFormatted}`
         const amPM = parts.isAM ? "AM" : "PM";
-        const month = parts.now.toLocaleString('default', { month: 'long' });
+        const month = parts.month;
         const date = parts.date;
         const year = parts.year;
 
@@ -36,9 +36,8 @@ class DigitalClock {
             minute: now.getMinutes(),
             isAM: now.getHours() < 12,
             date: now.getDate(),
-            month: now.getMonth(),
             year: now.getFullYear(),
-            now: now
+            month: now.toLocaleString('default', { month: 'long' })
         };
     }
 }
@@ -56,7 +55,6 @@ if ('geolocation' in navigator) {
 
 var long;
 var lat;
-var loc;
 
 navigator.geolocation.getCurrentPosition((position) => {
     long = position.coords.longitude;
@@ -150,4 +148,33 @@ function timestampToDate(timestamp){
     const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
     console.log(formattedDate);
     return formattedDate;
+}
+
+//To-do Section
+todoContainer = document.querySelector(".todo-container")
+todoInput = document.querySelector(".todo-input");
+addButton = document.querySelector(".addBtn")
+
+addButton.addEventListener("click", addItem);
+
+function addItem(){
+    const newItem = todoInput.value;
+    const todoDiv = document.createElement("div");
+    todoDiv.classList.add("todo")
+    const todoLi = document.createElement("li");
+    todoLi.innerText = newItem;
+    todoDiv.append(todoLi);
+    todoInput.value = "";
+    const checkBtn = document.createElement("button");
+    checkBtn.innerHTML = '<i class="fas fa-check"></i>'
+    checkBtn.classList.add("checkBtn")
+    const trashBtn = document.createElement("button");
+    trashBtn.innerHTML = '<i class="fas fa-trash"></i>';
+    trashBtn.classList.add("trashBtn")
+    todoDiv.append(checkBtn);
+    todoDiv.append(trashBtn);
+    todoContainer.append(todoDiv);
+
+    //<i class="fas fa-check"></i>
+    //<i class="fas fa-trash"></i>
 }

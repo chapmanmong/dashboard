@@ -1,9 +1,11 @@
 /* digital clock segment */
-
+body {
+    background: cyan;
+}
 .clock {
     font-family: sans-serif;
     background: #333;
-    width: 400px;
+    width: 500px;
     padding: 20px;
     text-align: center;
     border-radius: 10px;
@@ -23,6 +25,11 @@
 .clock-time {
     font-size: 4rem;
 }
+/* Forecast and Todo Row */
+.row {
+    display: flex;
+    justify-content: space-evenly;
+}
 
 /* 7-day forecast segment */
 
@@ -30,7 +37,7 @@
     font-family: sans-serif;
     margin: 2rem;
     background-color: #333;
-    width: 45%;
+    width: 38%;
     border-radius: 10px;
 }
 
@@ -40,8 +47,8 @@ ul {
     border-radius: 10px;
     text-align: center;
     list-style-type: none; /* Remove bullets */
-    padding: auto; /* Remove padding */
-    margin: 0; /* Remove margins */
+    padding: auto;
+    margin: auto;
   }
   
   ul li {
@@ -49,5 +56,64 @@ ul {
     border-bottom: 1px solid #ddd; /* Add a thin border to each list item */
     /* margin-top: -1px; Prevent double borders */
     background-color: #333;; /* Add a grey background color */
-    padding: 12px; /* Add some padding */
+    padding: 1rem; /* Add some padding */
   }
+
+  ul li:nth-child(7){
+      border-bottom: none;
+  }
+
+  /* Todo */
+
+  .todo-section {
+    text-align: center;
+    font-family: sans-serif;
+    margin: 2rem;
+    background-color: #333;
+    width: 38%;
+    border-radius: 10px;
+  }
+
+  .todo{
+    display: flex;
+    justify-content: center;
+    background: lightgrey;
+  }
+
+  fieldset {
+      margin: auto;
+      border: none;
+  }
+
+  .todo-container {
+   text-align: center; 
+  }
+
+  .todo li{
+      flex: 1;
+      list-style: none;
+      font-family: sans-serif;
+      font-weight: bold;
+      color: black;
+      padding: 0.5rem;
+  }
+
+  .trashBtn, .checkBtn {
+    border: none;
+    color: white;
+    padding: 0.5rem;
+  }
+
+  .trashBtn{
+      background: red;
+  }
+
+  .checkBtn {
+      background: green;
+  }
+
+  .todo-input, .addBtn {
+    padding: 0.5rem;
+}
+
+  
