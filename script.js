@@ -1,7 +1,7 @@
 const KEY = "AIzaSyBrI2TLDVgMq3uZlOdd2nTk1TKXW2jsLzM"
 const OPENWEATHERAPI = "608ac5b8c6bf5a9a1ff1a77467cb0f28"
 
-var options = { month: 'long'};
+var options = { month: 'long' };
 
 class DigitalClock {
     constructor(element) {
@@ -75,10 +75,10 @@ function getLocation(query) {
             clockObject.element.querySelector(".location").textContent = loc;
         })
         .catch(err => console.warn(err.message));
-        
+
 }
 
-function getWeather(weatherQuery){
+function getWeather(weatherQuery) {
     fetch(weatherQuery)
         .then(response => response.json())
         .then(data => {
@@ -93,34 +93,34 @@ function getWeather(weatherQuery){
         .catch(err => console.warn(err));
 }
 
-function idToIcon(id){
-    if (id >= 200 && id < 300){
+function idToIcon(id) {
+    if (id >= 200 && id < 300) {
         return `<i class="fas fa-bolt"></i>`;
     }
-    else if (id >= 300 && id < 400){
+    else if (id >= 300 && id < 400) {
         return `<i class="fas fa-cloud-rain"></i>`;
     }
-    else if (id >= 500 && id < 600){
+    else if (id >= 500 && id < 600) {
         return `<i class="fas fa-cloud-showers-heavy"></i>`;
     }
-    else if (id >= 600 && id < 700){
-       return `<i class="fas fa-snowflake"></i>`;
+    else if (id >= 600 && id < 700) {
+        return `<i class="fas fa-snowflake"></i>`;
     }
-    else if (id >= 700 && id < 800){
+    else if (id >= 700 && id < 800) {
         return `<i class="fas fa-exclamation"></i>`;
     }
     else if (id == 800) {
         return `<i class="fas fa-sun"></i>`;
     }
-    else if (id > 800){
+    else if (id > 800) {
         return `<i class="fas fa-cloud"></i>`;
     }
-    
+
 }
 
-function getForecast(data){
+function getForecast(data) {
     forecastList = document.querySelector(".forecast-list")
-    for(i = 1; i < 8; i++){
+    for (i = 1; i < 8; i++) {
         newLi = document.createElement('li');
         const minTemp = data.daily[i].temp.min;
         const maxTemp = data.daily[i].temp.max;
@@ -128,26 +128,14 @@ function getForecast(data){
         const weather_id = data.daily[i].weather[0].id;
         icon = idToIcon(weather_id)
         const text = `Min: ${minTemp}°C | Max:${maxTemp}°C | ${desc} | `
-        const date = timestampToDate(data.daily[i].dt);
-        newLi.textContent = date + ": " + text;
+        const date = new Date(data.daily[i].dt * 1000);
+        let formattedDate = new Intl.DateTimeFormat('en', { weekday: 'short', day: 'numeric' }).format(date);
+        newLi.textContent = formattedDate + ": " + text;
         newSpan = document.createElement("span");
         newSpan.innerHTML = icon;
         newLi.append(newSpan);
-        forecastList.append(newLi) 
-
+        forecastList.append(newLi)
     }
-}
-
-function timestampToDate(timestamp){
-    console.log(timestamp);
-    var options = { weekday: 'short', day: 'numeric' };
-    const date = new Date(timestamp * 1000);
-    // console.log(time.getMonth());
-    // const month = new Intl.DateTimeFormat('en-US', options).format(8);
-    // console.log(month);
-    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
-    console.log(formattedDate);
-    return formattedDate;
 }
 
 //To-do Section
@@ -155,9 +143,11 @@ todoContainer = document.querySelector(".todo-container")
 todoInput = document.querySelector(".todo-input");
 addButton = document.querySelector(".addBtn")
 
+document.addEventListener("DOMContentLoaded", load_items());
+
 addButton.addEventListener("click", addItem);
 
-function addItem(){
+function addItem() {
     const newItem = todoInput.value;
     const todoDiv = document.createElement("div");
     todoDiv.classList.add("todo")
@@ -168,13 +158,75 @@ function addItem(){
     const checkBtn = document.createElement("button");
     checkBtn.innerHTML = '<i class="fas fa-check"></i>'
     checkBtn.classList.add("checkBtn")
+    checkBtn.addEventListener("click", checkItem)
     const trashBtn = document.createElement("button");
     trashBtn.innerHTML = '<i class="fas fa-trash"></i>';
     trashBtn.classList.add("trashBtn")
+    trashBtn.addEventListener("click", deleteItem);
     todoDiv.append(checkBtn);
     todoDiv.append(trashBtn);
     todoContainer.append(todoDiv);
 
-    //<i class="fas fa-check"></i>
-    //<i class="fas fa-trash"></i>
+    //add to storage:
+    saveLocalTodos(newItem);
 }
+
+function checkItem(e) {
+    const item = e.target.parentElement.children[0];
+    item.classList.toggle("checked");
+}
+
+function deleteItem(e) {
+    const item = e.target.parentElement;
+    console.log(item.children[0].innerText)
+    //remove item from localStorage
+    todos = JSON.parse(localStorage.getItem("todos"));
+    index = todos.indexOf(item.children[0].innerText)
+    todos.splice(index, 1)
+    localStorage.setItem("todos", JSON.stringify(todos));
+    //remove from screen
+    item.remove();
+}
+
+//local storage functionality
+function saveLocalTodos(todo) {
+    //check if localStorage already exists
+    let todos;
+    if (localStorage.getItem("todos") === null || localStorage.getItem("todos").length == 0) {
+        todos = [];
+    } else {
+        todos = JSON.parse(localStorage.getItem("todos"));
+    }
+    if (todos != null){
+        todos.push(todo);
+        localStorage.setItem("todos", JSON.stringify(todos));
+    }
+    
+}
+
+function load_items() {
+    if (localStorage.getItem("todos") != null) {
+        let items = JSON.parse(localStorage.getItem("todos"))
+        console.log(items);
+
+        for(var i = 0; i < items.length; i++){
+            const todoDiv = document.createElement("div");
+            todoDiv.classList.add("todo")
+            const todoLi = document.createElement("li");
+            todoLi.innerText = items[i];
+            todoDiv.append(todoLi);
+            const checkBtn = document.createElement("button");
+            checkBtn.innerHTML = '<i class="fas fa-check"></i>'
+            checkBtn.classList.add("checkBtn")
+            checkBtn.addEventListener("click", checkItem)
+            const trashBtn = document.createElement("button");
+            trashBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            trashBtn.classList.add("trashBtn")
+            trashBtn.addEventListener("click", deleteItem);
+            todoDiv.append(checkBtn);
+            todoDiv.append(trashBtn);
+            todoContainer.append(todoDiv);
+        }   
+    }
+}
+
