@@ -2,12 +2,15 @@ const KEY = "AIzaSyBrI2TLDVgMq3uZlOdd2nTk1TKXW2jsLzM"
 const OPENWEATHERAPI = "608ac5b8c6bf5a9a1ff1a77467cb0f28"
 
 var options = { month: 'long' };
+var long;
+var lat;
 
 class DigitalClock {
     constructor(element) {
         this.element = element;
     }
 
+    // This function runs after the clock is instantiated to run update once then every .5 seconds
     start() {
         this.update();
         setInterval(() => {
@@ -15,8 +18,11 @@ class DigitalClock {
         }, 500);
     }
 
+    // This function updates the clock face
     update() {
-        const parts = this.getTimeParts();
+        const parts = this._getTimeParts();
+
+        // Pull the time/date components from the "parts" variable
         const minutesFormatted = parts.minute.toString().padStart(2, "0");
         const timeFormatted = `${parts.hour}:${minutesFormatted}`
         const amPM = parts.isAM ? "AM" : "PM";
@@ -24,12 +30,14 @@ class DigitalClock {
         const date = parts.date;
         const year = parts.year;
 
+        // Render the timeparts to the clock face
         this.element.querySelector(".clock-time").textContent = timeFormatted;
         this.element.querySelector(".clock-ampm").textContent = amPM;
         this.element.querySelector(".date").textContent = `${month} ${date}, ${year}`;
     };
 
-    getTimeParts() {
+    // Helper function that creates a new date object representing the current time and returns an object with the timeparts
+    _getTimeParts() {
         const now = new Date();
         return {
             hour: now.getHours() % 12 || 12,
@@ -42,31 +50,29 @@ class DigitalClock {
     }
 }
 
+// Instatiate clock element
 const clockElement = document.querySelector(".clock");
 const clockObject = new DigitalClock(clockElement);
 
 clockObject.start()
 
-if ('geolocation' in navigator) {
-    console.log("geolocation available");
-} else {
-    console.log("geolocation not available");
-}
+// if ('geolocation' in navigator) {
+//     console.log("geolocation available");
+// } else {
+//     console.log("geolocation not available");
+// }
 
-var long;
-var lat;
-
+// Get the current coordinates from the browser and build query strings to pass on to getLocation and getWeather functions
 navigator.geolocation.getCurrentPosition((position) => {
     long = position.coords.longitude;
     lat = position.coords.latitude;
     query = `https://maps.googleapis.com/maps/api/geocode/json?result_type=locality&latlng=${lat},${long}&key=${KEY}`;
-    //console.log(query);
     getLocation(query);
     weatherQuery = `https://api.openweathermap.org/data/2.5/onecall?units=metric&lat=${lat}&lon=${long}&appid=${OPENWEATHERAPI}`;
-    console.log(weatherQuery);
     getWeather(weatherQuery);
 });
 
+// Function that queries Google API and gets the name of the current location and renders it on the clockface
 function getLocation(query) {
     fetch(query)
         .then(response => response.json())
@@ -75,16 +81,18 @@ function getLocation(query) {
             clockObject.element.querySelector(".location").textContent = loc;
         })
         .catch(err => console.warn(err.message));
-
 }
 
+// Function that queries the openweathermap API to get current temperature and weather and render on clockface
 function getWeather(weatherQuery) {
     fetch(weatherQuery)
         .then(response => response.json())
         .then(data => {
+            // Get the current weather data
             var current_temp = data.current.temp;
             var current_desc = data.current.weather[0].description;
             var weather_id = data.current.weather[0].id;
+            // getForecast() gets the weather forecast for the next 7 days
             getForecast(data);
             clockObject.element.querySelector(".temp").textContent = current_temp;
             clockObject.element.querySelector(".conditions").textContent = current_desc;
@@ -93,6 +101,7 @@ function getWeather(weatherQuery) {
         .catch(err => console.warn(err));
 }
 
+// Helper function that takes in an id from weathermap and returns a corresponding weather icon from font awesome
 function idToIcon(id) {
     if (id >= 200 && id < 300) {
         return `<i class="fas fa-bolt"></i>`;
@@ -118,8 +127,10 @@ function idToIcon(id) {
 
 }
 
+// Function that gets the forecast weather for the next 7 days
 function getForecast(data) {
     forecastList = document.querySelector(".forecast-list")
+    //Create a new list element for each day and build the descriptions and append it to the forecastList unordered list
     for (i = 1; i < 8; i++) {
         newLi = document.createElement('li');
         const minTemp = data.daily[i].temp.min;
@@ -144,9 +155,9 @@ todoInput = document.querySelector(".todo-input");
 addButton = document.querySelector(".addBtn")
 
 document.addEventListener("DOMContentLoaded", load_items());
-
 addButton.addEventListener("click", addItem);
 
+// This function creates a new div representing a new to-do item onto  todoContainer
 function addItem() {
     const newItem = todoInput.value;
     const todoDiv = document.createElement("div");
@@ -197,11 +208,11 @@ function saveLocalTodos(todo) {
     } else {
         todos = JSON.parse(localStorage.getItem("todos"));
     }
-    if (todos != null){
+    if (todos != null) {
         todos.push(todo);
         localStorage.setItem("todos", JSON.stringify(todos));
     }
-    
+
 }
 
 function load_items() {
@@ -209,7 +220,8 @@ function load_items() {
         let items = JSON.parse(localStorage.getItem("todos"))
         console.log(items);
 
-        for(var i = 0; i < items.length; i++){
+        // Recreate the todo items from local storage and render them on the todoContainer
+        for (var i = 0; i < items.length; i++) {
             const todoDiv = document.createElement("div");
             todoDiv.classList.add("todo")
             const todoLi = document.createElement("li");
@@ -226,7 +238,7 @@ function load_items() {
             todoDiv.append(checkBtn);
             todoDiv.append(trashBtn);
             todoContainer.append(todoDiv);
-        }   
+        }
     }
 }
 
